@@ -158,7 +158,7 @@ const PATH=[
 {p:0,lat:26,lon:-97.15},{p:.004,lat:27.2,lon:-95.8},{p:.0118,lat:26.5,lon:-93.5},
 {p:.043,lat:28,lon:-80},{p:.057,lat:30,lon:-60},{p:.1086,lat:25,lon:-20},
 {p:.25,lat:10,lon:20},{p:.4,lat:-5,lon:60},{p:.55,lat:15,lon:110},
-{p:.7,lat:-10,lon:160},{p:.85,lat:5,lon:-140},{p:.894,lat:-15,lon:-110},
+{p:.7,lat:-10,lon:160},{p:.78,lat:-3,lon:175},{p:.82,lat:0,lon:-170},{p:.85,lat:5,lon:-150},{p:.894,lat:-15,lon:-110},
 {p:.955,lat:-22,lon:-95},{p:1,lat:-25,lon:-85}
 ];
 const TELE=[
@@ -206,13 +206,15 @@ const p=n=>String(n).padStart(2,'0');
 return (neg?'−':'+')+`${p(h)}:${p(m)}:${p(s)}`;
 }
 function lerp(a,b,t){return a+(b-a)*t}
+function lerpLon(a,b,t){let d=b-a;while(d>180)d-=360;while(d<-180)d+=360;return a+d*t}
+function normLon(lon){return (lon+540)%360-180}
 function pathAt(p){
 p=clamp(p,0,1);
 if(p<=PATH[0].p)return{lat:PATH[0].lat,lon:PATH[0].lon};
 if(p>=PATH[PATH.length-1].p){const q=PATH[PATH.length-1];return{lat:q.lat,lon:q.lon}}
 for(let i=0;i<PATH.length-1;i++){
 const A=PATH[i],B=PATH[i+1];
-if(p>=A.p&&p<=B.p){const t=(p-A.p)/(B.p-A.p||1);return{lat:lerp(A.lat,B.lat,t),lon:lerp(A.lon,B.lon,t)}}
+if(p>=A.p&&p<=B.p){const t=(p-A.p)/(B.p-A.p||1);return{lat:lerp(A.lat,B.lat,t),lon:normLon(lerpLon(A.lon,B.lon,t))}}
 }
 return{lat:PATH[0].lat,lon:PATH[0].lon};
 }
